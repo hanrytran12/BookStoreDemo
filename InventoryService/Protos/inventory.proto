@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option csharp_namespace = "InventoryService.Grpc";
+
+service InventoryGrpc {
+  rpc GetInventoryByBookId (InventoryRequest) returns (InventoryReply);
+  rpc CreateInventory(CreateRequest) returns (CreateResponse);
+  rpc DecreaseStock(DecreaseRequest) returns (DecreaseReply);
+}
+
+message InventoryRequest {
+  int32 bookId = 1;
+}
+
+message InventoryReply {
+  int32 bookId = 1;
+  int32 quantity = 2;
+}
+
+message CreateRequest {
+	int32 bookId = 1;
+}
+
+message CreateResponse {
+	bool success = 1;
+}
+
+message DecreaseRequest {
+	int32 bookId = 1;
+}
+
+message DecreaseReply {
+	bool success = 1;
+}

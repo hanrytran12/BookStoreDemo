@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "OrderService.Grpc";
+
+service OrderGrpc {
+  rpc GetOrdersByUserId (UserRequest) returns (stream Order);
+}
+
+message UserRequest {
+  int32 userId = 1;
+}
+
+message Order {
+  int32 id = 1;
+  int32 userId = 2;
+  int32 bookId = 3;
+  string orderDate = 4;
+}
