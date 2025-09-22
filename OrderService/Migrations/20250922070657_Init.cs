@@ -17,7 +17,8 @@ namespace OrderService.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    bookId = table.Column<int>(type: "int", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>

@@ -54,10 +54,6 @@ namespace OrderService.Controllers
                     Book = reply
                 });
             }
-            //catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
-            //{
-            //    return NotFound(new { Message = "Book not found." });
-            //}
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while creating the order.", Details = ex.Message });
