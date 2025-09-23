@@ -1,6 +1,9 @@
-﻿using Grpc.Core;
+﻿using AuthService.Helper;
+using AuthService.Services;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using UserService.DTO;
 using UserService.Grpc;
 using UserService.Services;
@@ -12,14 +15,29 @@ namespace AuthService.Controllers
     public class AuthController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        public AuthController(JwtService jwtService)
+        private readonly AuthValidationService _authValidationService;
+        public AuthController(JwtService jwtService, AuthValidationService authValidationService)
         {
             _jwtService = jwtService;
+            _authValidationService = authValidationService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO request)
         {
+            try
+            {
+                _authValidationService.ValidationLogin(request);
+            }
+            catch (CustomValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                });
+            }
+
             using var channel = GrpcChannel.ForAddress("https://localhost:7184");
             var client = new UserGrpc.UserGrpcClient(channel);
             try
@@ -41,6 +59,19 @@ namespace AuthService.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO request)
         {
+            try
+            {
+                _authValidationService.ValidationRegister(request);
+            }
+            catch (CustomValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                });
+            }
+
             using var channel = GrpcChannel.ForAddress("https://localhost:7184");
             var client = new UserGrpc.UserGrpcClient(channel);
             try

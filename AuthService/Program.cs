@@ -1,3 +1,4 @@
+using AuthService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using UserService.Services;
 
@@ -26,6 +27,7 @@ builder.Services.AddAuthentication(options =>
     });
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<AuthValidationService>();
 
 var app = builder.Build();
 
