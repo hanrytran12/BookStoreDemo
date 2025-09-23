@@ -33,6 +33,8 @@ builder.Services.AddAuthorization(options =>
         options.AddPolicy("User", policy => policy.RequireClaim("User"));
     });
 
+builder.Services.AddScoped<BookValidationService>();
+
 var app = builder.Build();
 
 app.MapGrpcService<BookGrpcService>();

@@ -17,7 +17,7 @@ namespace AuthService.Services
                 throw new CustomValidationException("Invalid email format");
             }
 
-            if (request.FullName.Trim() == null || request.Email.Trim() == null || request.Password.Trim() == null || request.Username.Trim() == null)
+            if (string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.Username))
             {
                 throw new CustomValidationException("All fields are required");
             }
@@ -25,7 +25,7 @@ namespace AuthService.Services
 
         public void ValidationLogin(LoginDTO request)
         {
-            if (request.Password.Trim() == null || request.Username.Trim() == null)
+            if (string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.Username))
             {
                 throw new CustomValidationException("All fields are required");
             }

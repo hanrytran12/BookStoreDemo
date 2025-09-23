@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BookService.Data;
 using BookService.DTO;
+using BookService.Helper;
+using BookService.Services;
 using Grpc.Net.Client;
 using InventoryService.Grpc;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,13 @@ namespace BookService.Controllers
     {
         private readonly BookDbContext _context;
         private readonly IMapper _mapper;
+        private readonly BookValidationService _validationService;
 
-        public BooksController(BookDbContext context, IMapper mapper)
+        public BooksController(BookDbContext context, IMapper mapper, BookValidationService validationService)
         {
             _context = context;
             _mapper = mapper;
+            _validationService = validationService;
         }
 
         [HttpGet]
@@ -44,6 +48,19 @@ namespace BookService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] AddBookDTO addBookDTO)
         {
+            try
+            {
+                _validationService.ValidationCreateBook(addBookDTO);
+            }
+            catch (CustomValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    IsSuccess = false,
+                    message = ex.Message,
+                });
+            }
+
             using var channel = GrpcChannel.ForAddress("https://localhost:7220");
             var client = new InventoryGrpc.InventoryGrpcClient(channel);
             var book = _mapper.Map<Models.Book>(addBookDTO);
