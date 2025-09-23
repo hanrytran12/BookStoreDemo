@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Grpc.Net.Client;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OrderService.Grpc;
 using UserService.Data;
 
 namespace UserService.Controllers
@@ -36,33 +39,27 @@ namespace UserService.Controllers
             return Ok(userDto);
         }
 
-        //[HttpGet("orders")]
-        //public async Task<IActionResult> GetOrdersByUserId()
-        //{
-        //    using var channel = GrpcChannel.ForAddress("http://localhost:6000");
-        //    //, new GrpcChannelOptions
-        //    //{
-        //    //    HttpHandler = new HttpClientHandler
-        //    //    {
-        //    //        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        //    //    }
-        //    //});
-        //    var client = new OrderGrpc.OrderGrpcClient(channel);
-        //    var userId = int.Parse(User.FindFirst("userId")?.Value);
-        //    var steam = client.GetOrdersByUserId(new UserRequest { UserId = userId });
-        //    var orders = new List<Order>();
-        //    while (await steam.ResponseStream.MoveNext(CancellationToken.None))
-        //    {
-        //        orders.Add(steam.ResponseStream.Current);
-        //    }
+        [HttpGet("orders")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetOrdersByUserId()
+        {
+            using var channel = GrpcChannel.ForAddress("https://localhost:6001");
+            var client = new OrderGrpc.OrderGrpcClient(channel);
+            var userId = int.Parse(User.FindFirst("userId")?.Value);
+            var steam = client.GetOrdersByUserId(new UserRequest { UserId = userId });
+            var orders = new List<Order>();
+            while (await steam.ResponseStream.MoveNext(CancellationToken.None))
+            {
+                orders.Add(steam.ResponseStream.Current);
+            }
 
-        //    if (orders.Count == 0)
-        //    {
-        //        return NotFound(new { Message = "No orders found for this user." });
-        //    }
+            if (orders.Count == 0)
+            {
+                return NotFound(new { Message = "No orders found for this user." });
+            }
 
-        //    return Ok(orders);
-        //}
+            return Ok(orders);
+        }
 
         public async Task<IActionResult> DeleteUser(int id)
         {

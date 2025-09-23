@@ -6,12 +6,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.WebHost.ConfigureKestrel(options =>
-//{
-//    options.ListenLocalhost(6000, o => o.Protocols =
-//        Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2);
-//});
-
 builder.Services.AddGrpc();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<OrderDbContext>(options =>
