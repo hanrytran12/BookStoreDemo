@@ -1,4 +1,5 @@
 ﻿using BookService.Grpc;
+using Grpc.Core;
 using Grpc.Net.Client;
 using InventoryService.Grpc;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderService.Data;
 using OrderService.Models;
+using GrpcStatusCode = Grpc.Core.StatusCode;
 
 namespace OrderService.Controllers
 {
@@ -54,10 +56,10 @@ namespace OrderService.Controllers
                     Book = reply
                 });
             }
-            //catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
-            //{
-            //    return NotFound(new { Message = "Book not found." });
-            //}
+            catch (RpcException ex) when (ex.StatusCode == GrpcStatusCode.NotFound)
+            {
+                return NotFound(new { Message = $"Book with id {bookId} not found in BookService." });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while creating the order.", Details = ex.Message });
@@ -65,6 +67,7 @@ namespace OrderService.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);

@@ -61,6 +61,8 @@ namespace UserService.Controllers
             return Ok(orders);
         }
 
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);

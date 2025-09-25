@@ -3,6 +3,7 @@ using BookService.Data;
 using BookService.DTO;
 using Grpc.Net.Client;
 using InventoryService.Grpc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,7 @@ namespace BookService.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateBook([FromBody] AddBookDTO addBookDTO)
         {
             using var channel = GrpcChannel.ForAddress("https://localhost:7220");
@@ -59,6 +61,7 @@ namespace BookService.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var book = await _context.Books.FindAsync(id);
