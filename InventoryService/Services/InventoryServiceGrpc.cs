@@ -7,6 +7,7 @@ namespace InventoryService.Services
     public class InventoryServiceGrpc : InventoryGrpc.InventoryGrpcBase
     {
         private readonly InventoryDbContext _context;
+
         public InventoryServiceGrpc(InventoryDbContext context)
         {
             _context = context;

@@ -30,7 +30,7 @@ namespace OrderService.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> CreateOrder(int bookId)
         {
-            using var channel = GrpcChannel.ForAddress("https://localhost:5001");
+            using var channel = GrpcChannel.ForAddress("https://localhost:5000");
             var client = new BookGrpc.BookGrpcClient(channel);
             try
             {
@@ -44,7 +44,7 @@ namespace OrderService.Controllers
                 });
                 await _context.SaveChangesAsync();
 
-                using var inventoryChannel = GrpcChannel.ForAddress("https://localhost:7220");
+                using var inventoryChannel = GrpcChannel.ForAddress("https://localhost:5001");
                 var inventoryClient = new InventoryGrpc.InventoryGrpcClient(inventoryChannel);
                 var inventoryReply = await inventoryClient.DecreaseStockAsync(new DecreaseRequest { BookId = bookId });
 

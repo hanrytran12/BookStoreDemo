@@ -44,7 +44,7 @@ namespace BookService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromBody] AddBookDTO addBookDTO)
         {
-            using var channel = GrpcChannel.ForAddress("https://localhost:7220");
+            using var channel = GrpcChannel.ForAddress("https://localhost:5001");
             var client = new InventoryGrpc.InventoryGrpcClient(channel);
             var book = _mapper.Map<Models.Book>(addBookDTO);
             _context.Books.Add(book);
